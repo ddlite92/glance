@@ -166,7 +166,6 @@ pages:
           - type: afanasy-machines
             title: Afanasy Machines
             allow-insecure: true
-            title: Afanasy Machines
             cache: 30s
     
 
