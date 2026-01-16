@@ -13,6 +13,4 @@ services:
       - ./html:/app/html:ro
       - ./css:/app/css:ro
     restart: unless-stopped
-    environment:
-      # Add any environment variables your app needs here
-      # EXAMPLE_ENV: value
+    environment: .env
