@@ -24,8 +24,7 @@ WORKDIR /app
 COPY --from=builder /app/glance /app/glance
 
 
-# Copy config and static assets
-COPY --from=builder /app/glance.yml /app/glance.yml
+COPY --from=builder /app/glance/glance.yml /app/glance.yml
 COPY --from=builder /app/internal/glance/static /app/static
 
 # Expose the port the app runs on (change if needed)
