@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  glance:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: glance
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./glance.yml:/app/glance.yml:ro
+      - ./html:/app/html:ro
+      - ./css:/app/css:ro
+    restart: unless-stopped
+    environment:
+      # Add any environment variables your app needs here
+      # EXAMPLE_ENV: value
