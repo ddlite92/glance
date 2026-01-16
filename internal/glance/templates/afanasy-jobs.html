@@ -7,17 +7,29 @@
       <tr>
         <th onclick="sortJobsTable(0)">User Name</th>
         <th onclick="sortJobsTable(1)">Job Name</th>
-        <th onclick="sortJobsTable(2)">State</th>
-        <th onclick="sortJobsTable(3)">Progress (%)</th>
+        <th>Branch</th>
+        <th>Priority</th>
+        <th>Status</th>
+        <th>Progress (%)</th>
+        <th>Frames</th>
+        <th>ETA</th>
       </tr>
     </thead>
     <tbody>
       {{range .}}
-      <tr class="{{if eq .State "ERR"}}job-error{{end}}">
+      <tr class="{{if eq .State "ERR"}}job-error{{else if eq .State "DON"}}job-finished{{else}}job-running{{end}}">
         <td>{{.UserName}}</td>
         <td>{{.Name}}</td>
-        <td>{{.State}}</td>
+        <td>{{.Branch}}</td>
+        <td>{{.Priority}}</td>
+        <td>
+          <span class="{{if eq .State "DON"}}status-finished{{else if eq .State "ERR"}}status-error{{else}}status-running{{end}}">
+            {{if eq .State "DON"}}Finished{{else if eq .State "ERR"}}Error{{else}}Running{{end}}
+          </span>
+        </td>
         <td>{{printf "%.2f" .Percentage}}</td>
+        <td>{{if .Blocks}}{{len .Blocks}}{{else}}-{{end}}</td>
+        <td>-</td>
       </tr>
       {{end}}
     </tbody>

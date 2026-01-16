@@ -1,0 +1,51 @@
+/* Simple styles for Afanasy Jobs and Machines tables */
+.afanasy-jobs-table-container, .afanasy-machines-table-container {
+  margin: 2em auto;
+  max-width: 1200px;
+  background: #222;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px #000a;
+  padding: 1em;
+}
+.afanasy-jobs-table-container table, .afanasy-machines-table-container table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #222;
+  color: #eee;
+}
+.afanasy-jobs-table-container th, .afanasy-machines-table-container th {
+  background: #333;
+  color: #ffd700;
+  font-weight: bold;
+  padding: 0.5em;
+  border-bottom: 2px solid #444;
+  cursor: pointer;
+}
+.afanasy-jobs-table-container td, .afanasy-machines-table-container td {
+  padding: 0.5em;
+  border-bottom: 1px solid #333;
+}
+.job-error td {
+  background: #330000;
+  color: #ff6666;
+}
+.job-finished td {
+  background: #003300;
+  color: #66ff66;
+}
+.job-running td {
+  background: #222233;
+  color: #66aaff;
+}
+.status-finished {
+  color: #66ff66;
+  font-weight: bold;
+}
+.status-error {
+  color: #ff6666;
+  font-weight: bold;
+}
+.status-running {
+  color: #ffd700;
+  font-weight: bold;
+}

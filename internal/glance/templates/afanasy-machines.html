@@ -6,17 +6,21 @@
     <thead>
       <tr>
         <th onclick="sortMachinesTable(0)">Machine Name</th>
-        <th onclick="sortMachinesTable(1)">State</th>
-        <th onclick="sortMachinesTable(2)">CPU Usage</th>
-        <th onclick="sortMachinesTable(3)">Memory Used (MB)</th>
-        <th onclick="sortMachinesTable(4)">Memory Total (MB)</th>
+        <th>Status</th>
+        <th>CPU Usage</th>
+        <th>Memory Used (MB)</th>
+        <th>Memory Total (MB)</th>
       </tr>
     </thead>
     <tbody>
       {{range .}}
-      <tr>
+      <tr class="{{if eq .State "ONL RUN"}}job-running{{else if eq .State "OFF NBY"}}job-error{{else if eq .State "ONL NBY"}}job-finished{{end}}">
         <td>{{.Name}}</td>
-        <td>{{.State}}</td>
+        <td>
+          <span class="{{if eq .State "ONL RUN"}}status-running{{else if eq .State "OFF NBY"}}status-error{{else if eq .State "ONL NBY"}}status-finished{{end}}">
+            {{.State}}
+          </span>
+        </td>
         <td>{{.CPUUsage}}</td>
         <td>{{.MemUsedMB}}</td>
         <td>{{.MemTotalMB}}</td>
