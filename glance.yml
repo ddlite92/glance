@@ -1,0 +1,166 @@
+server:
+  port: 8081
+
+pages:
+  - name: Home
+    # Optionally, if you only have a single page you can hide the desktop navigation for a cleaner look
+    # hide-desktop-navigation: true
+    columns:
+      - size: small
+        widgets:
+          - type: rss
+            limit: 20
+            collapse-after: 15
+            cache: 12h
+            feeds:
+              - url: https://code.blender.org/feed/
+                title: Blender
+                limit: 2
+              - url: https://www.blendernation.com/feed/
+                title: Blender Nation
+                limit: 2
+              - url: https://80.lv/feed/
+                title: 80 Level (Graphics R&D)
+                limit: 2
+              - url: https://developer.nvidia.com/blog/feed/
+                title: NVIDIA Developer Blog
+                limit: 2
+              - url: https://dev.to/feed
+                title: Dev.to
+                limit: 2
+              - url: https://realpython.com/atom.xml
+                title: Real Python
+                limit: 2
+
+      - size: full
+        widgets:
+          - type: group
+            widgets:
+              - type: hacker-news
+              
+          - type: videos
+            style: grid-cards
+            channels:
+              - UCAsj9iReHzLEYv9QawGzIOg # blender dev
+              - UCz75RVbH8q2jdBJ4SnwuZZQ # blender studio
+              - UCGSJevmBuDyxjLLOBNaYMGA # Polygon runaway
+              - UCDdv3C21EFv7MxBMu70OExw # InspirationTuts
+              - UCBHcMCGaiJhv-ESTcWGJPcw # Nvidia developer
+
+      - size: small
+        widgets:
+          - type: calendar
+            first-day-of-week: monday
+              
+  - name: Render Farm
+    columns:
+      - size: full
+        widgets:
+          - type: afanasy-jobs
+            title: Afanasy Jobs
+            cache: 30s
+      - size: small
+        widgets:
+          - type: monitor
+            style: vertical-list
+            cache: 30s
+            title: Render Nodes
+            sites:
+              - title: mon180
+                url: http://192.168.90.180
+              - title: mon181
+                url: http://192.168.90.181
+              - title: mon188
+                url: http://192.168.90.188
+              - title: mon194
+                url: http://192.168.90.194
+      
+  - name: Developer
+    columns:
+      - size: full
+        widgets:
+          - type: split-column
+            max-columns: 4
+            widgets:
+              - type: repository
+                title: "Monsta Pipeline Issues"
+                token: ${GITHUB_TOKEN}
+                repository: MonstaStudios/monsta_pipeline_issues
+                pull-requests-limit: 5
+                issues-limit: 5
+                commits-limit: 3
+
+              - type: repository
+                title: "Monsta Studio Pipeline"
+                token: ${GITHUB_TOKEN}
+                repository: MonstaStudios/monsta-studio-pipeline
+                pull-requests-limit: 5
+                issues-limit: 3
+                commits-limit: 3
+
+              - type: repository
+                title: "Blender Submit Tool"
+                token: ${GITHUB_TOKEN}
+                repository: MonstaStudios/cgru_tools
+                pull-requests-limit: 5
+                issues-limit: 3
+                commits-limit: 3
+
+              - type: repository
+                title: "Blender"
+                token: ${GITHUB_TOKEN}
+                repository: MonstaStudios/blender
+                pull-requests-limit: 5
+                issues-limit: 3
+                commits-limit: 3
+
+      - size: small
+        widgets:
+          - type: monitor
+            style: vertical-list
+            cache: 1m
+            title: Services
+            sites:
+              - title: Kitsu
+                url: https://pro.monsta.com/
+              - title: Monsta Review
+                url: https://rev.monsta.com/
+              - title: Issue Form
+                url: https://monsta-pipeline-issues.vercel.app/
+              - title: Monsta Studio Github
+                url: https://github.com/MonstaStudios
+              - title: Monsta Sync
+                url: http://192.168.90.103:8384/
+              - title: Afanays Web UI
+                url: http://192.168.90.103:51000/
+              - title: Afanasy API
+                url: http://192.168.90.104:5000/afanasy/jobs
+                icon: si:json
+              - title: Afanasy Machines
+                url: http://192.168.90.104:5000/afanasy/renders
+
+  - name: Render Machines
+    columns:
+      - size: full
+        widgets:
+          - type: afanasy-machines
+            title: Afanasy Machines
+            cache: 30s
+    
+
+  
+
+  # Add more pages here:
+  # - name: Your page name
+  #   columns:
+  #     - size: small
+  #       widgets:
+  #         # Add widgets here
+
+  #     - size: full
+  #       widgets:
+  #         # Add widgets here
+
+  #     - size: small
+  #       widgets:
+  #         # Add widgets here
