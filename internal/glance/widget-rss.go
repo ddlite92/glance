@@ -38,6 +38,7 @@ type rssWidget struct {
 	CollapseAfter    int              `yaml:"collapse-after"`
 	SingleLineTitles bool             `yaml:"single-line-titles"`
 	PreserveOrder    bool             `yaml:"preserve-order"`
+	AllowInsecure    bool             `yaml:"allow-insecure"`
 
 	Items          rssFeedItemList `yaml:"-"`
 	NoItemsMessage string          `yaml:"-"`
@@ -213,7 +214,11 @@ func (widget *rssWidget) fetchItemsFromFeedTask(request rssFeedRequest) ([]rssFe
 		req.Header.Set(key, value)
 	}
 
-	resp, err := defaultHTTPClient.Do(req)
+	httpClient := defaultHTTPClient
+	if widget.AllowInsecure {
+		httpClient = defaultInsecureHTTPClient
+	}
+	resp, err := httpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}

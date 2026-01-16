@@ -15,21 +15,27 @@ pages:
             cache: 12h
             feeds:
               - url: https://code.blender.org/feed/
+                allow-insecure: true
                 title: Blender
                 limit: 2
               - url: https://www.blendernation.com/feed/
+                allow-insecure: true
                 title: Blender Nation
                 limit: 2
               - url: https://80.lv/feed/
+                allow-insecure: true
                 title: 80 Level (Graphics R&D)
                 limit: 2
               - url: https://developer.nvidia.com/blog/feed/
+                allow-insecure: true
                 title: NVIDIA Developer Blog
                 limit: 2
               - url: https://dev.to/feed
+                allow-insecure: true
                 title: Dev.to
                 limit: 2
               - url: https://realpython.com/atom.xml
+                allow-insecure: true
                 title: Real Python
                 limit: 2
 
@@ -41,6 +47,7 @@ pages:
               
           - type: videos
             style: grid-cards
+            allow-insecure: true
             channels:
               - UCAsj9iReHzLEYv9QawGzIOg # blender dev
               - UCz75RVbH8q2jdBJ4SnwuZZQ # blender studio
@@ -60,6 +67,7 @@ pages:
           - type: afanasy-jobs
             title: Afanasy Jobs
             cache: 30s
+            allow-insecure: true
       - size: small
         widgets:
           - type: monitor
@@ -69,6 +77,7 @@ pages:
             sites:
               - title: mon180
                 url: http://192.168.90.180
+                allow-insecure: true
               - title: mon181
                 url: http://192.168.90.181
               - title: mon188
@@ -90,6 +99,7 @@ pages:
                 pull-requests-limit: 5
                 issues-limit: 5
                 commits-limit: 3
+                allow-insecure: true
 
               - type: repository
                 title: "Monsta Studio Pipeline"
@@ -98,6 +108,7 @@ pages:
                 pull-requests-limit: 5
                 issues-limit: 3
                 commits-limit: 3
+                allow-insecure: true
 
               - type: repository
                 title: "Blender Submit Tool"
@@ -106,6 +117,7 @@ pages:
                 pull-requests-limit: 5
                 issues-limit: 3
                 commits-limit: 3
+                allow-insecure: true
 
               - type: repository
                 title: "Blender"
@@ -114,6 +126,7 @@ pages:
                 pull-requests-limit: 5
                 issues-limit: 3
                 commits-limit: 3
+                allow-insecure: true
 
       - size: small
         widgets:
@@ -124,12 +137,16 @@ pages:
             sites:
               - title: Kitsu
                 url: https://pro.monsta.com/
+                allow-insecure: true
               - title: Monsta Review
                 url: https://rev.monsta.com/
+                allow-insecure: true
               - title: Issue Form
                 url: https://monsta-pipeline-issues.vercel.app/
+                allow-insecure: true
               - title: Monsta Studio Github
                 url: https://github.com/MonstaStudios
+                allow-insecure: true
               - title: Monsta Sync
                 url: http://192.168.90.103:8384/
               - title: Afanays Web UI

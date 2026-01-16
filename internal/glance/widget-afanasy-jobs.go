@@ -11,7 +11,8 @@ import (
 )
 
 type afanasyJobsWidget struct {
-	widgetBase
+	widgetBase    `yaml:",inline"`
+	AllowInsecure bool `yaml:"allow-insecure"`
 }
 
 type AfanasyJob struct {
@@ -29,7 +30,12 @@ func (widget *afanasyJobsWidget) initialize() error {
 
 func (widget *afanasyJobsWidget) update(ctx context.Context) {
 	url := "http://192.168.90.104:5000/afanasy/jobs"
-	client := &http.Client{Timeout: 10 * time.Second}
+	var client *http.Client
+	if widget.AllowInsecure {
+		client = defaultInsecureHTTPClient
+	} else {
+		client = defaultHTTPClient
+	}
 	resp, err := client.Get(url)
 	if err != nil {
 		widget.withError(fmt.Errorf("failed to fetch jobs from n8n: %w", err))

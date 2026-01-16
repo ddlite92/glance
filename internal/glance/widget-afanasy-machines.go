@@ -11,7 +11,8 @@ import (
 )
 
 type afanasyMachinesWidget struct {
-	widgetBase
+	widgetBase    `yaml:",inline"`
+	AllowInsecure bool `yaml:"allow-insecure"`
 }
 
 type AfanasyMachine struct {
@@ -34,7 +35,12 @@ func (widget *afanasyMachinesWidget) initialize() error {
 
 func (widget *afanasyMachinesWidget) update(ctx context.Context) {
 	url := "http://192.168.90.104:5000/afanasy/renders"
-	client := &http.Client{Timeout: 10 * time.Second}
+	var client *http.Client
+	if widget.AllowInsecure {
+		client = defaultInsecureHTTPClient
+	} else {
+		client = defaultHTTPClient
+	}
 	resp, err := client.Get(url)
 	if err != nil {
 		widget.withError(fmt.Errorf("failed to fetch machines from API: %w", err))

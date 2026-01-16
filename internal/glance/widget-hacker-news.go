@@ -19,6 +19,7 @@ type hackerNewsWidget struct {
 	ExtraSortBy         string        `yaml:"extra-sort-by"`
 	CollapseAfter       int           `yaml:"collapse-after"`
 	CommentsUrlTemplate string        `yaml:"comments-url-template"`
+	AllowInsecure       bool          `yaml:"allow-insecure"`
 	ShowThumbnails      bool          `yaml:"-"`
 }
 
@@ -44,7 +45,7 @@ func (widget *hackerNewsWidget) initialize() error {
 }
 
 func (widget *hackerNewsWidget) update(ctx context.Context) {
-	posts, err := fetchHackerNewsPosts(widget.SortBy, 40, widget.CommentsUrlTemplate)
+	posts, err := fetchHackerNewsPosts(widget.SortBy, 40, widget.CommentsUrlTemplate, widget.AllowInsecure)
 
 	if !widget.canContinueUpdateAfterHandlingErr(err) {
 		return
@@ -75,9 +76,13 @@ type hackerNewsPostResponseJson struct {
 	TimePosted   int64  `json:"time"`
 }
 
-func fetchHackerNewsPostIds(sort string) ([]int, error) {
+func fetchHackerNewsPostIds(sort string, allowInsecure bool) ([]int, error) {
 	request, _ := http.NewRequest("GET", fmt.Sprintf("https://hacker-news.firebaseio.com/v0/%sstories.json", sort), nil)
-	response, err := decodeJsonFromRequest[[]int](defaultHTTPClient, request)
+	httpClient := defaultHTTPClient
+	if allowInsecure {
+		httpClient = defaultInsecureHTTPClient
+	}
+	response, err := decodeJsonFromRequest[[]int](httpClient, request)
 	if err != nil {
 		return nil, fmt.Errorf("%w: could not fetch list of post IDs", errNoContent)
 	}
@@ -85,7 +90,7 @@ func fetchHackerNewsPostIds(sort string) ([]int, error) {
 	return response, nil
 }
 
-func fetchHackerNewsPostsFromIds(postIds []int, commentsUrlTemplate string) (forumPostList, error) {
+func fetchHackerNewsPostsFromIds(postIds []int, commentsUrlTemplate string, allowInsecure bool) (forumPostList, error) {
 	requests := make([]*http.Request, len(postIds))
 
 	for i, id := range postIds {
@@ -93,7 +98,11 @@ func fetchHackerNewsPostsFromIds(postIds []int, commentsUrlTemplate string) (for
 		requests[i] = request
 	}
 
-	task := decodeJsonFromRequestTask[hackerNewsPostResponseJson](defaultHTTPClient)
+	httpClient := defaultHTTPClient
+	if allowInsecure {
+		httpClient = defaultInsecureHTTPClient
+	}
+	task := decodeJsonFromRequestTask[hackerNewsPostResponseJson](httpClient)
 	job := newJob(task, requests).withWorkers(30)
 	results, errs, err := workerPoolDo(job)
 	if err != nil {
@@ -138,8 +147,8 @@ func fetchHackerNewsPostsFromIds(postIds []int, commentsUrlTemplate string) (for
 	return posts, nil
 }
 
-func fetchHackerNewsPosts(sort string, limit int, commentsUrlTemplate string) (forumPostList, error) {
-	postIds, err := fetchHackerNewsPostIds(sort)
+func fetchHackerNewsPosts(sort string, limit int, commentsUrlTemplate string, allowInsecure bool) (forumPostList, error) {
+	postIds, err := fetchHackerNewsPostIds(sort, allowInsecure)
 	if err != nil {
 		return nil, err
 	}
@@ -148,5 +157,5 @@ func fetchHackerNewsPosts(sort string, limit int, commentsUrlTemplate string) (f
 		postIds = postIds[:limit]
 	}
 
-	return fetchHackerNewsPostsFromIds(postIds, commentsUrlTemplate)
+	return fetchHackerNewsPostsFromIds(postIds, commentsUrlTemplate, allowInsecure)
 }
