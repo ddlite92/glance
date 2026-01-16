@@ -68,6 +68,8 @@ pages:
             title: Afanasy Jobs
             cache: 30s
             allow-insecure: true
+          - type: calendar
+            title: Debug Calendar
       - size: small
         widgets:
           - type: monitor

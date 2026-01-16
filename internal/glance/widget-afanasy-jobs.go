@@ -55,6 +55,8 @@ func (widget *afanasyJobsWidget) update(ctx context.Context) {
 	}
 	j := jobsData.Jobs
 
+	fmt.Printf("afanasy-jobs widget: loaded %d jobs\n", len(j))
+
 	tmpl, err := template.ParseFiles("internal/glance/templates/afanasy-jobs.html")
 	if err != nil {
 		widget.withError(fmt.Errorf("failed to parse template: %w", err))
