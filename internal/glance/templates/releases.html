@@ -12,7 +12,12 @@
         </div>
         <ul class="list-horizontal-text">
             <li {{ dynamicRelativeTimeAttrs .TimeReleased }}></li>
-            <li>{{ .Version }}</li>
+            <li>
+                {{- if .Label -}}
+                    <span class="color-muted">{{ .Label }}</span>
+                {{- end -}}
+                {{ .Version }}
+            </li>
             {{ if gt .Downvotes 3 }}
             <li>{{ .Downvotes | formatNumber }} ⚠</li>
             {{ end }}

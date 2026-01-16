@@ -1,0 +1,78 @@
+<!-- afanasy-machines.html: Table UI for Afanasy Render Machines (AG Grid/AntD style inspiration) -->
+<div class="afanasy-machines-table-container">
+  <input type="text" id="machineSearch" placeholder="Search by machine/user name..." onkeyup="filterMachinesTable()" />
+  <button onclick="exportMachinesTable()">Export CSV</button>
+  <table id="afanasyMachinesTable" class="ag-theme-balham">
+    <thead>
+      <tr>
+        <th onclick="sortMachinesTable(0)">Machine Name</th>
+        <th onclick="sortMachinesTable(1)">State</th>
+        <th onclick="sortMachinesTable(2)">CPU Usage</th>
+        <th onclick="sortMachinesTable(3)">Memory Used (MB)</th>
+        <th onclick="sortMachinesTable(4)">Memory Total (MB)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{range .}}
+      <tr>
+        <td>{{.Name}}</td>
+        <td>{{.State}}</td>
+        <td>{{.CPUUsage}}</td>
+        <td>{{.MemUsedMB}}</td>
+        <td>{{.MemTotalMB}}</td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+</div>
+<script>
+// Natural sort helper
+function naturalSort(a, b) {
+  return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
+}
+// Table sorting
+function sortMachinesTable(colIdx) {
+  var table = document.getElementById('afanasyMachinesTable');
+  var rows = Array.from(table.tBodies[0].rows);
+  var asc = table.getAttribute('data-sort-asc') === 'true';
+  rows.sort(function(a, b) {
+    return asc ? naturalSort(a.cells[colIdx].innerText, b.cells[colIdx].innerText)
+               : naturalSort(b.cells[colIdx].innerText, a.cells[colIdx].innerText);
+  });
+  rows.forEach(row => table.tBodies[0].appendChild(row));
+  table.setAttribute('data-sort-asc', !asc);
+}
+// Table filter
+function filterMachinesTable() {
+  var input = document.getElementById('machineSearch').value.toLowerCase();
+  var table = document.getElementById('afanasyMachinesTable');
+  Array.from(table.tBodies[0].rows).forEach(row => {
+    row.style.display = row.cells[0].innerText.toLowerCase().includes(input) ? '' : 'none';
+  });
+}
+// Export CSV
+function exportMachinesTable() {
+  var table = document.getElementById('afanasyMachinesTable');
+  var csv = [];
+  for (var i = 0, row; row = table.rows[i]; i++) {
+    var cols = Array.from(row.cells).map(cell => '"' + cell.innerText.replace(/"/g, '""') + '"');
+    csv.push(cols.join(','));
+  }
+  var csvStr = csv.join('\n');
+  var blob = new Blob([csvStr], { type: 'text/csv' });
+  var link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'afanasy-machines.csv';
+  link.click();
+}
+// Auto-refresh every 30s
+setTimeout(() => location.reload(), 30000);
+</script>
+<style>
+.afanasy-machines-table-container { max-width: 100%; overflow-x: auto; }
+#afanasyMachinesTable { width: 100%; border-collapse: collapse; }
+#afanasyMachinesTable th, #afanasyMachinesTable td { border: 1px solid #ccc; padding: 6px 10px; }
+#afanasyMachinesTable th { background: #f5f5f5; cursor: pointer; }
+#machineSearch { margin-bottom: 8px; padding: 4px 8px; }
+tr:hover { background: #f0f8ff; }
+</style>
