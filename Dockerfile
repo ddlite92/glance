@@ -23,10 +23,6 @@ WORKDIR /app
 # Copy the binary from the builder
 COPY --from=builder /app/glance /app/glance
 
-
-COPY --from=builder /app/glance/glance.yml /app/glance.yml
-COPY --from=builder /app/internal/glance/static /app/static
-
 # Expose the port the app runs on (change if needed)
 EXPOSE 8081
 
