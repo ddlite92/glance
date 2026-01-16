@@ -76,14 +76,16 @@ pages:
             title: Render Nodes
             sites:
               - title: mon180
-                url: http://192.168.90.180
+                url: http://192.168.0.101
                 allow-insecure: true
               - title: mon181
                 url: http://192.168.90.181
               - title: mon188
-                url: http://192.168.90.188
+                url: http://192.168.0.164
+                allow-insecure: true
               - title: mon194
-                url: http://192.168.90.194
+                url: http://192.168.0.184
+                allow-insecure: true
       
   - name: Developer
     columns:
