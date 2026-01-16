@@ -43,12 +43,17 @@ func (widget *afanasyJobsWidget) update(ctx context.Context) {
 	}
 	defer resp.Body.Close()
 
-	var jobs []AfanasyJob
+	// Support JSON with a 'jobs' key
+	type jobsResponse struct {
+		Jobs []AfanasyJob `json:"jobs"`
+	}
+	var jobsData jobsResponse
 	decoder := json.NewDecoder(resp.Body)
-	if err := decoder.Decode(&jobs); err != nil {
+	if err := decoder.Decode(&jobsData); err != nil {
 		widget.withError(fmt.Errorf("failed to decode jobs JSON: %w", err))
 		return
 	}
+	j := jobsData.Jobs
 
 	tmpl, err := template.ParseFiles("internal/glance/templates/afanasy-jobs.html")
 	if err != nil {
@@ -56,7 +61,7 @@ func (widget *afanasyJobsWidget) update(ctx context.Context) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := tmpl.Execute(&buf, jobs); err != nil {
+	if err := tmpl.Execute(&buf, j); err != nil {
 		widget.withError(fmt.Errorf("failed to execute template: %w", err))
 		return
 	}

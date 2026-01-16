@@ -48,16 +48,17 @@ func (widget *afanasyMachinesWidget) update(ctx context.Context) {
 	}
 	defer resp.Body.Close()
 
-	var data []AfanasyMachinesData
+	// Support JSON with a 'renders' key
+	type rendersResponse struct {
+		Renders []AfanasyMachine `json:"renders"`
+	}
+	var rendersData rendersResponse
 	decoder := json.NewDecoder(resp.Body)
-	if err := decoder.Decode(&data); err != nil {
+	if err := decoder.Decode(&rendersData); err != nil {
 		widget.withError(fmt.Errorf("failed to decode machine data JSON: %w", err))
 		return
 	}
-	var machines []AfanasyMachine
-	if len(data) > 0 {
-		machines = data[0].Machines
-	}
+	machines := rendersData.Renders
 
 	tmpl, err := template.ParseFiles("internal/glance/templates/afanasy-machines.html")
 	if err != nil {
