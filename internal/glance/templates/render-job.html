@@ -12,7 +12,7 @@
           <div class="job-title">{{ .Name }}</div>
           <div class="job-status">
             {{ if .Status }}
-              <span class="status-indicator status-{{ .Status | lower }}"></span>
+              <span class="status-indicator status-{{ .Status }}"></span>
               <span>{{ .Status }}</span>
             {{ else }}
               <span class="status-indicator status-unknown"></span>
@@ -21,7 +21,7 @@
           </div>
           <div class="job-progress-bar">
             <div class="progress-bar-bg">
-              <div class="progress-bar-fill" style="width: {{ .Progress }}%"></div>
+              <div class="progress-bar-fill" style="width: {{ .Progress }}%;"></div>
             </div>
             <span class="progress-label">{{ .Progress }}%</span>
           </div>
