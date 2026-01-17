@@ -475,33 +475,19 @@ var customAPITemplateFuncs = func() template.FuncMap {
 	}
 
 	funcs := template.FuncMap{
-		"toFloat": func(a int) float64 {
-			return float64(a)
-		},
-		"toInt": func(a float64) int {
-			return int(a)
-		},
-		"add": func(a, b any) any {
-			return doMathOpWithAny(a, b, "add")
-		},
-		"sub": func(a, b any) any {
-			return doMathOpWithAny(a, b, "sub")
-		},
-		"mul": func(a, b any) any {
-			return doMathOpWithAny(a, b, "mul")
-		},
-		"div": func(a, b any) any {
-			return doMathOpWithAny(a, b, "div")
-		},
+		"toFloat": func(a int) float64 { return float64(a) },
+		"toInt":   func(a float64) int { return int(a) },
+		"add":     func(a, b any) any { return doMathOpWithAny(a, b, "add") },
+		"sub":     func(a, b any) any { return doMathOpWithAny(a, b, "sub") },
+		"mul":     func(a, b any) any { return doMathOpWithAny(a, b, "mul") },
+		"div":     func(a, b any) any { return doMathOpWithAny(a, b, "div") },
 		"mod": func(a, b int) int {
 			if b == 0 {
 				return 0
 			}
 			return a % b
 		},
-		"now": func() time.Time {
-			return time.Now()
-		},
+		"now": func() time.Time { return time.Now() },
 		"offsetNow": func(offset string) time.Time {
 			d, err := time.ParseDuration(offset)
 			if err != nil {
@@ -514,61 +500,41 @@ var customAPITemplateFuncs = func() template.FuncMap {
 			if err != nil {
 				return 0
 			}
-
 			return d
 		},
-		"parseTime": func(layout, value string) time.Time {
-			return customAPIFuncParseTimeInLocation(layout, value, time.UTC)
-		},
+		"parseTime":  func(layout, value string) time.Time { return customAPIFuncParseTimeInLocation(layout, value, time.UTC) },
 		"formatTime": customAPIFuncFormatTime,
 		"parseLocalTime": func(layout, value string) time.Time {
 			return customAPIFuncParseTimeInLocation(layout, value, time.Local)
 		},
 		"toRelativeTime": dynamicRelativeTimeAttrs,
 		"parseRelativeTime": func(layout, value string) template.HTMLAttr {
-			// Shorthand to do both of the above with a single function call
 			return dynamicRelativeTimeAttrs(customAPIFuncParseTimeInLocation(layout, value, time.UTC))
 		},
-		"startOfDay": func(t time.Time) time.Time {
-			return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, t.Location())
-		},
+		"startOfDay": func(t time.Time) time.Time { return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, t.Location()) },
 		"endOfDay": func(t time.Time) time.Time {
 			return time.Date(t.Year(), t.Month(), t.Day(), 23, 59, 59, 0, t.Location())
 		},
-		// The reason we flip the parameter order is so that you can chain multiple calls together like this:
-		// {{ .JSON.String "foo" | trimPrefix "bar" | doSomethingElse }}
-		// instead of doing this:
-		// {{ trimPrefix (.JSON.String "foo") "bar" | doSomethingElse }}
-		// since the piped value gets passed as the last argument to the function.
-		"trimPrefix": func(prefix, s string) string {
-			return strings.TrimPrefix(s, prefix)
-		},
-		"trimSuffix": func(suffix, s string) string {
-			return strings.TrimSuffix(s, suffix)
-		},
-		"trimSpace": strings.TrimSpace,
-		"replaceAll": func(old, new, s string) string {
-			return strings.ReplaceAll(s, old, new)
-		},
+		"trimPrefix": func(prefix, s string) string { return strings.TrimPrefix(s, prefix) },
+		"trimSuffix": func(suffix, s string) string { return strings.TrimSuffix(s, suffix) },
+		"trimSpace":  strings.TrimSpace,
+		"replaceAll": func(old, new, s string) string { return strings.ReplaceAll(s, old, new) },
 		"replaceMatches": func(pattern, replacement, s string) string {
 			if s == "" {
 				return ""
 			}
-
 			return getCachedRegexp(pattern).ReplaceAllString(s, replacement)
 		},
 		"findMatch": func(pattern, s string) string {
 			if s == "" {
 				return ""
 			}
-
 			return getCachedRegexp(pattern).FindString(s)
 		},
 		"findSubmatch": func(pattern, s string) string {
 			if s == "" {
 				return ""
 			}
-
 			regex := getCachedRegexp(pattern)
 			return itemAtIndexOrDefault(regex.FindStringSubmatch(s), 1, "")
 		},
@@ -578,10 +544,8 @@ var customAPITemplateFuncs = func() template.FuncMap {
 				if order == "asc" {
 					return results[a].String(key) < results[b].String(key)
 				}
-
 				return results[a].String(key) > results[b].String(key)
 			})
-
 			return results
 		},
 		"sortByInt": func(key, order string, results []decoratedGJSONResult) []decoratedGJSONResult {
@@ -589,10 +553,8 @@ var customAPITemplateFuncs = func() template.FuncMap {
 				if order == "asc" {
 					return results[a].Int(key) < results[b].Int(key)
 				}
-
 				return results[a].Int(key) > results[b].Int(key)
 			})
-
 			return results
 		},
 		"sortByFloat": func(key, order string, results []decoratedGJSONResult) []decoratedGJSONResult {
@@ -600,29 +562,22 @@ var customAPITemplateFuncs = func() template.FuncMap {
 				if order == "asc" {
 					return results[a].Float(key) < results[b].Float(key)
 				}
-
 				return results[a].Float(key) > results[b].Float(key)
 			})
-
 			return results
 		},
 		"sortByTime": func(key, layout, order string, results []decoratedGJSONResult) []decoratedGJSONResult {
 			sort.Slice(results, func(a, b int) bool {
 				timeA := customAPIFuncParseTimeInLocation(layout, results[a].String(key), time.UTC)
 				timeB := customAPIFuncParseTimeInLocation(layout, results[b].String(key), time.UTC)
-
 				if order == "asc" {
 					return timeA.Before(timeB)
 				}
-
 				return timeA.After(timeB)
 			})
-
 			return results
 		},
-		"concat": func(items ...string) string {
-			return strings.Join(items, "")
-		},
+		"concat": func(items ...string) string { return strings.Join(items, "") },
 		"unique": func(key string, results []decoratedGJSONResult) []decoratedGJSONResult {
 			seen := make(map[string]struct{})
 			out := make([]decoratedGJSONResult, 0, len(results))
@@ -635,11 +590,7 @@ var customAPITemplateFuncs = func() template.FuncMap {
 			}
 			return out
 		},
-		"newRequest": func(url string) *CustomAPIRequest {
-			return &CustomAPIRequest{
-				URL: url,
-			}
-		},
+		"newRequest": func(url string) *CustomAPIRequest { return &CustomAPIRequest{URL: url} },
 		"withHeader": func(key, value string, req *CustomAPIRequest) *CustomAPIRequest {
 			if req.Headers == nil {
 				req.Headers = make(map[string]string)
@@ -664,19 +615,22 @@ var customAPITemplateFuncs = func() template.FuncMap {
 			if err != nil {
 				panic(fmt.Sprintf("initializing request: %v", err))
 			}
-
 			data, err := fetchCustomAPIResponse(context.Background(), req)
 			if err != nil {
 				slog.Error("Could not fetch response within custom API template", "error", err)
-				return &customAPIResponseData{
-					JSON: decoratedGJSONResult{gjson.Result{}},
-					Response: &http.Response{
-						Status: err.Error(),
-					},
+				return &customAPIResponseData{JSON: decoratedGJSONResult{gjson.Result{}}, Response: &http.Response{Status: err.Error()}}
+			}
+			return data
+		},
+		// filter: returns a filtered slice of decoratedGJSONResult where key == value
+		"filter": func(key, value string, results []decoratedGJSONResult) []decoratedGJSONResult {
+			filtered := make([]decoratedGJSONResult, 0, len(results))
+			for _, result := range results {
+				if result.String(key) == value {
+					filtered = append(filtered, result)
 				}
 			}
-
-			return data
+			return filtered
 		},
 	}
 
