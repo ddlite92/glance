@@ -1,29 +1,34 @@
 {{ template "widget-base.html" . }}
 
 {{ define "widget-content" }}
-<div class="render-job-widget">
-  <h3>Render Jobs</h3>
+<div class="render-job-widget dashboard-style">
+  <h2 class="dashboard-title">Render Jobs - Realtime Tracking</h2>
   {{ if .Jobs }}
-    <table class="render-job-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Status</th>
-          <th>Progress</th>
-        </tr>
-      </thead>
-      <tbody>
-        {{ range .Jobs }}
-        <tr>
-          <td>{{ .ID }}</td>
-          <td>{{ .Name }}</td>
-          <td>{{ .Status }}</td>
-          <td>{{ .Progress }}%</td>
-        </tr>
-        {{ end }}
-      </tbody>
-    </table>
+    <div class="dashboard-job-list">
+      {{ range .Jobs }}
+      <div class="dashboard-job-row">
+        <div class="job-id">#{{ .ID }}</div>
+        <div class="job-main">
+          <div class="job-title">{{ .Name }}</div>
+          <div class="job-status">
+            {{ if .Status }}
+              <span class="status-indicator status-{{ .Status | lower }}"></span>
+              <span>{{ .Status }}</span>
+            {{ else }}
+              <span class="status-indicator status-unknown"></span>
+              <span>Unknown</span>
+            {{ end }}
+          </div>
+          <div class="job-progress-bar">
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" style="width: {{ .Progress }}%"></div>
+            </div>
+            <span class="progress-label">{{ .Progress }}%</span>
+          </div>
+        </div>
+      </div>
+      {{ end }}
+    </div>
   {{ else }}
     <div class="render-job-empty">No jobs found.</div>
   {{ end }}

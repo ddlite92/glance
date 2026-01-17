@@ -34,7 +34,7 @@ type renderJobWidget struct {
 }
 
 func (widget *renderJobWidget) initialize() error {
-	widget.withTitle("Render Jobs").withCacheDuration(30 * time.Second)
+	widget.withTitle("Render Jobs").withCacheDuration(1 * time.Minute)
 	if widget.APIUrl == "" {
 		widget.APIUrl = "http://192.168.90.104:5000/afanasy/jobs"
 	}
