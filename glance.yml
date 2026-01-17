@@ -7,7 +7,7 @@ pages:
     # Optionally, if you only have a single page you can hide the desktop navigation for a cleaner look
     # hide-desktop-navigation: true
     columns:
-      - size: full
+      - size: small
         widgets:
             - type: split-column
               max-columns: 1
@@ -16,21 +16,18 @@ pages:
                   title: OpenCue
                   token: ${GITHUB_TOKEN}
                   repository: AcademySoftwareFoundation/OpenCue
-                  pull-requests-limit: 3
                   commits-limit: 3
                   allow-insecure: true
                 - type: repository
                   title: Open Shading Language
                   token: ${GITHUB_TOKEN}
                   repository: AcademySoftwareFoundation/OpenShadingLanguage
-                  pull-requests-limit: 3
                   commits-limit: 3
                   allow-insecure: true
                 - type: repository
                   title: OpenAI Python
                   token: ${GITHUB_TOKEN}
                   repository: openai/openai-python
-                  pull-requests-limit: 3
                   commits-limit: 3
                   allow-insecure: true
 
@@ -46,7 +43,7 @@ pages:
               - UCDdv3C21EFv7MxBMu70OExw # InspirationTuts
               - UCBHcMCGaiJhv-ESTcWGJPcw # Nvidia developer
 
-      - size: full
+      - size: small
         widgets:
           - type: calendar
             first-day-of-week: monday
@@ -57,7 +54,7 @@ pages:
             allow-insecure: true
             url: 'https://api.ossinsight.io/v1/trends/repos/?period=past_24_hours&language=All'
             template: |
-              <ul class="list list-gap-10 collapsible-container" data-collapse-after="3">
+              <ul class="list list-gap-10 collapsible-container" data-collapse-after="5">
                 {{ range .JSON.Array "data.rows"}}
                   <li>
                     <a class="color-primary-if-not-visited" href="https://github.com/{{ .String "repo_name" }}">{{ .String "repo_name" }}</a>
@@ -181,6 +178,14 @@ pages:
                 icon: si:json
               - title: Afanasy Machines
                 url: http://192.168.90.104:5000/afanasy/renders
+
+  - name: Render Job
+    columns:
+      - size: full
+        widgets:
+          - type: render-job
+            title: Render Jobs
+            api-url: http://192.168.90.104:5000/afanasy/jobs
 
 #  - name: Render Machines
 #    columns:

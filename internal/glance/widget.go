@@ -81,6 +81,8 @@ func newWidget(widgetType string) (widget, error) {
 		w = &serverStatsWidget{}
 	case "to-do":
 		w = &todoWidget{}
+	case "render-job":
+		w = &renderJobWidget{}
 	/*
 		case "afanasy-jobs":
 			w = &afanasyJobsWidget{}

@@ -1,0 +1,31 @@
+{{ template "widget-base.html" . }}
+
+{{ define "widget-content" }}
+<div class="render-job-widget">
+  <h3>Render Jobs</h3>
+  {{ if .Jobs }}
+    <table class="render-job-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Status</th>
+          <th>Progress</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{ range .Jobs }}
+        <tr>
+          <td>{{ .ID }}</td>
+          <td>{{ .Name }}</td>
+          <td>{{ .Status }}</td>
+          <td>{{ .Progress }}%</td>
+        </tr>
+        {{ end }}
+      </tbody>
+    </table>
+  {{ else }}
+    <div class="render-job-empty">No jobs found.</div>
+  {{ end }}
+</div>
+{{ end }}
