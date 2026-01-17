@@ -433,17 +433,6 @@ func customAPIDoMathOp[T int | float64](a, b T, op string) T {
 }
 
 var customAPITemplateFuncs = func() template.FuncMap {
-		       // filterOut: returns a filtered slice excluding items where key == value
-		       // Usage: {{ filterOut .Items "FieldName" "value" }}
-		       "filterOut": func(items []decoratedGJSONResult, key string, value string) []decoratedGJSONResult {
-			       filtered := make([]decoratedGJSONResult, 0, len(items))
-			       for _, item := range items {
-				       if item.String(key) != value {
-					       filtered = append(filtered, item)
-				       }
-			       }
-			       return filtered
-		       },
 	var regexpCacheMu sync.Mutex
 	var regexpCache = make(map[string]*regexp.Regexp)
 
@@ -486,58 +475,6 @@ var customAPITemplateFuncs = func() template.FuncMap {
 	}
 
 	funcs := template.FuncMap{
-		// sort: sorts a slice of decoratedGJSONResult by key and order (asc/desc), type can be "string", "int", "float", or "time" (with layout for time)
-		// Usage: {{ sort .Items "key" "asc" "string" }} or {{ sort .Items "key" "asc" "time" "2006-01-02T15:04:05Z07:00" }}
-		"sort": func(items []decoratedGJSONResult, key string, order string, typ string, extra ...string) []decoratedGJSONResult {
-			switch typ {
-			case "string":
-				sort.Slice(items, func(i, j int) bool {
-					if order == "asc" {
-						return items[i].String(key) < items[j].String(key)
-					}
-					return items[i].String(key) > items[j].String(key)
-				})
-			case "int":
-				sort.Slice(items, func(i, j int) bool {
-					if order == "asc" {
-						return items[i].Int(key) < items[j].Int(key)
-					}
-					return items[i].Int(key) > items[j].Int(key)
-				})
-			case "float":
-				sort.Slice(items, func(i, j int) bool {
-					if order == "asc" {
-						return items[i].Float(key) < items[j].Float(key)
-					}
-					return items[i].Float(key) > items[j].Float(key)
-				})
-			case "time":
-				layout := time.RFC3339
-				if len(extra) > 0 {
-					layout = extra[0]
-				}
-				sort.Slice(items, func(i, j int) bool {
-					t1 := customAPIFuncParseTimeInLocation(layout, items[i].String(key), time.UTC)
-					t2 := customAPIFuncParseTimeInLocation(layout, items[j].String(key), time.UTC)
-					if order == "asc" {
-						return t1.Before(t2)
-					}
-					return t1.After(t2)
-				})
-			}
-			return items
-		},
-		// filter: returns a filtered slice based on a predicate function
-		// Usage in template: {{ filter .Items "FieldName" "value" }}
-		"filter": func(items []decoratedGJSONResult, key string, value string) []decoratedGJSONResult {
-			filtered := make([]decoratedGJSONResult, 0, len(items))
-			for _, item := range items {
-				if item.String(key) == value {
-					filtered = append(filtered, item)
-				}
-			}
-			return filtered
-		},
 		"toFloat": func(a int) float64 {
 			return float64(a)
 		},

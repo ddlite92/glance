@@ -15,11 +15,8 @@ COPY . .
 # Build the Go app
 RUN go build -o glance ./main.go
 
+# Use a minimal image for the final runtime
 FROM debian:bookworm-slim
-
-# Install curl for debugging and API testing
-RUN apt-get update && apt-get install -y --no-install-recommends curl \
-	&& rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
