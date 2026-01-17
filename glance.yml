@@ -9,16 +9,14 @@ pages:
     columns:
       - size: small
         widgets:
+            - type: trending-github-repositories
+              title: Trending GitHub Repos
+              limit: 10
+              language: all
+              period: daily
             - type: split-column
               max-columns: 1
               widgets:
-                - type: repository
-                  title: Blender Mirror
-                  token: ${GITHUB_TOKEN}
-                  repository: blender/blender-mirror
-                  pull-requests-limit: 3
-                  commits-limit: 5
-                  allow-insecure: true
                 - type: repository
                   title: OpenCue
                   token: ${GITHUB_TOKEN}
