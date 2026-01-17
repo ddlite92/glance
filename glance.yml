@@ -33,15 +33,18 @@ pages:
 
       - size: full
         widgets:
-          - type: videos
-            style: grid-cards
-            allow-insecure: true
-            channels:
-              - UCAsj9iReHzLEYv9QawGzIOg # blender dev
-              - UCz75RVbH8q2jdBJ4SnwuZZQ # blender studio
-              - UCGSJevmBuDyxjLLOBNaYMGA # Polygon runaway
-              - UCDdv3C21EFv7MxBMu70OExw # InspirationTuts
-              - UCBHcMCGaiJhv-ESTcWGJPcw # Nvidia developer
+          - type: custom-api
+            title: Cats as a Service
+            url: https://cataas.com/api/cats?limit=12
+            cache: 1h
+            template: |
+              <div class="cat-photo-grid">
+                {{ range .JSON.Array }}
+                  <div class="cat-photo-item">
+                    <img src="https://cataas.com/cat/{{ .String "_id" }}" alt="cat" style="width:100%;border-radius:8px;box-shadow:0 2px 8px #0002;" />
+                  </div>
+                {{ end }}
+              </div>
 
       - size: small
         widgets:
@@ -183,9 +186,111 @@ pages:
     columns:
       - size: full
         widgets:
-          - type: render-job
-            title: Render Jobs
-            api-url: http://192.168.90.104:5000/afanasy/jobs
+          - type: custom-api
+            title: Render Jobs (LIVE)
+            url: http://192.168.90.104:5000/afanasy/jobs
+            cache: 0s
+            refresh-interval: 10s
+            template: |
+              <!--
+                Note: For true real-time, ensure the API and Glance backend are not caching responses.
+                This widget refreshes every 10s, but backend/API cache may delay updates.
+              -->
+              <style>
+                .job-dashboard-table {
+                  width: 100%;
+                  border-collapse: collapse;
+                  margin-top: 1em;
+                  background: #181a20;
+                  border-radius: 8px;
+                  overflow: hidden;
+                  font-size: 1em;
+                }
+                .job-dashboard-table th, .job-dashboard-table td {
+                  padding: 0.7em 1em;
+                  text-align: left;
+                }
+                .job-dashboard-table th {
+                  background: #23242a;
+                  color: #ffe082;
+                  font-weight: 700;
+                  letter-spacing: 1px;
+                }
+                .job-dashboard-table tr:nth-child(even) {
+                  background: #23242a;
+                }
+                .job-dashboard-table tr:nth-child(odd) {
+                  background: #202124;
+                }
+                .job-progress-bar {
+                  width: 120px;
+                  height: 12px;
+                  background: #333;
+                  border-radius: 6px;
+                  overflow: hidden;
+                  display: inline-block;
+                  margin-right: 0.5em;
+                  vertical-align: middle;
+                }
+                .job-progress-fill {
+                  height: 100%;
+                  background: linear-gradient(90deg, #ffe082, #ffd54f 80%);
+                  border-radius: 6px 0 0 6px;
+                  transition: width 0.5s;
+                }
+                .job-user {
+                  color: #90caf9;
+                  font-weight: 600;
+                  font-size: 0.97em;
+                  letter-spacing: 0.5px;
+                }
+                .job-status {
+                  font-weight: 600;
+                  padding: 0.2em 0.7em;
+                  border-radius: 5px;
+                  color: #fff;
+                  display: inline-block;
+                  font-size: 0.95em;
+                }
+                .job-status.DON { background: #4caf50; }
+                .job-status.ERR { background: #e57373; }
+                .job-status.SUS { background: #ffb300; }
+                .job-status.RDY { background: #64b5f6; }
+                .job-status.OFF { background: #757575; }
+                .job-status.UNKNOWN { background: #b0bec5; }
+              </style>
+              <h2 style="margin-bottom:0.5em;">Render Jobs - Realtime Tracking</h2>
+              <table class="job-dashboard-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>User</th>
+                    <th>Status</th>
+                    <th>Progress</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{ $jobs := (filter (sort .JSON.Array "jobs" "user_name") (lambda "j" (ne (j.String "user_name") "afadmin"))) }}
+                  {{ range $jobs }}
+                  <tr>
+                    <td>{{ .Int "id" }}</td>
+                    <td>{{ .String "name" }}</td>
+                    <td><span class="job-user">{{ .String "user_name" }}</span></td>
+                    <td>
+                      {{ $status := (or (.String "state") (.String "status") "UNKNOWN") }}
+                      <span class="job-status {{ $status }}">{{ $status }}</span>
+                    </td>
+                    <td>
+                      <div class="job-progress-bar">
+                        <div class="job-progress-fill" style="width: {{ .Int "progress_percentage" }}%;"></div>
+                      </div>
+                      <span>{{ .Int "progress_percentage" }}%</span>
+                    </td>
+                  </tr>
+                  {{ end }}
+                </tbody>
+              </table>
 
 #  - name: Render Machines
 #    columns:
