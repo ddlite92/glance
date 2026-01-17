@@ -49,7 +49,7 @@ type customAPIWidget struct {
 }
 
 func (widget *customAPIWidget) initialize() error {
-	widget.withTitle("Custom API").withCacheDuration(1 * time.Hour)
+	widget.withTitle("Custom API").withCacheDuration(time.Duration(widget.CustomCacheDuration))
 
 	if err := widget.CustomAPIRequest.initialize(); err != nil {
 		return fmt.Errorf("initializing primary request: %v", err)

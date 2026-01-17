@@ -40,9 +40,9 @@ pages:
             cache: 1h
             template: |
               <div class="cat-photo-grid">
-                {{ range .JSON.Array }}
+                {{ range .JSON.Array "" }}
                   <div class="cat-photo-item">
-                    <img src="https://cataas.com/cat/{{ .String "_id" }}" alt="cat" style="width:100%;border-radius:8px;box-shadow:0 2px 8px #0002;" />
+                    <img src="https://cataas.com/cat/{{ .String "id" }}" alt="cat" style="width:100%;border-radius:8px;box-shadow:0 2px 8px #0002;" />
                   </div>
                 {{ end }}
               </div>
@@ -82,35 +82,7 @@ pages:
                 {{ end }}
               </ul>
               
-#  - name: Render Farm
-#    columns:
-#      - size: full
-#        widgets:
-#          - type: afanasy-jobs
-#            title: Afanasy Jobs
-#            cache: 30s
-#            allow-insecure: true
-#          - type: calendar
-#            title: Debug Calendar
-#      - size: small
-#        widgets:
-#          - type: monitor
-#            style: vertical-list
-#            cache: 30s
-#            title: Render Nodes
-#            sites:
-#              - title: mon180
-#                url: http://192.168.0.101
-#                allow-insecure: true
-#              - title: mon181
-#                url: http://192.168.90.181
-#              - title: mon188
-#                url: http://192.168.0.164
-#                allow-insecure: true
-#              - title: mon194
-#                url: http://192.168.0.184
-#                allow-insecure: true
-      
+  
   - name: Developer
     columns:
       - size: full
@@ -188,7 +160,7 @@ pages:
       - size: full
         widgets:
           - type: custom-api
-            title: Render Jobs (LIVE)
+            title: Render Jobs (- refresh to update -)
             url: http://192.168.90.104:5000/afanasy/jobs
             cache: 0s
             refresh-interval: 10s
@@ -261,6 +233,12 @@ pages:
                 .job-status.UNKNOWN { background: #b0bec5; }
               </style>
               <h2 style="margin-bottom:0.5em;">Render Jobs - Realtime Tracking</h2>
+              <div class="filter-bar">
+                <form method="get">
+                  <input class="filter-input" type="text" name="user" value="{{ .Options.StringOr "user" "" }}" placeholder="Filter by user (e.g. mon176)" />
+                  <button type="submit">Filter</button>
+                </form>
+              </div>
               <table class="job-dashboard-table">
                 <thead>
                   <tr>
@@ -273,6 +251,10 @@ pages:
                 </thead>
                 <tbody>
                   {{ $jobs := (filterNot "user_name" "afadmin" (sort (.JSON.Array "jobs") "user_name")) }}
+                  {{ $user := .Options.StringOr "user" "" }}
+                  {{ if $user }}
+                    {{ $jobs := filter "user_name" $user $jobs }}
+                  {{ end }}
                   {{ range $jobs }}
                   <tr>
                     <td>{{ .Int "id" }}</td>
@@ -293,16 +275,83 @@ pages:
                 </tbody>
               </table>
 
-#  - name: Render Machines
-#    columns:
-#      - size: full
-#        widgets:
-#          - type: afanasy-machines
-#            title: Afanasy Machines
-#            allow-insecure: true
-#            cache: 30s
-    
+  - name: Render Machines
+    columns:
+      - size: full
+        widgets:
+          - type: custom-api
+            title: Render Machines (LIVE)
+            url: http://192.168.90.104:5000/afanasy/renders
+            cache: 0s
+            refresh-interval: 10s
+            allow-insecure: true
+            template: |
+             <style>
+                .machine-cluster { margin-bottom: 2em; }
+                .machine-title { font-size: 1.2em; font-weight: bold; margin-bottom: 0.5em; }
+                .machine-list { list-style: none; padding: 0; }
+                .machine-item { padding: 0.5em 1em; border-bottom: 1px solid #23242a; }
+                .offline { color: #e57373; }
+                .online { color: #4caf50; }
+                .nimby { color: #ffb300; }
+                .running { color: #64b5f6; }
+                .machine-meta { font-size: 0.95em; color: #aaa; }
+              </style>
+              <h2>Render Machines - Clustered by State</h2>
+              {{ $machines := .JSON.Array "" }}
+              {{ $offline := filter "state" "OFF NBY" $machines }}
+              {{ $online := filter "state" "ONL" $machines }}
+              {{ $nimby := filter "state" "ONL NBY" $machines }}
+              {{ $running := filter "state" "ONL RUN" $machines }}
 
+              <div class="machine-cluster">
+                <div class="machine-title offline">Offline (OFF NBY)</div>
+                <ul class="machine-list">
+                  {{ range $offline }}
+                    <li class="machine-item offline">
+                      <b>{{ .String "name" }}</b>
+                      <span class="machine-meta">[ID: {{ .Int "id" }}, Host: {{ .String "host_name" }}]</span>
+                      <span>State: {{ .String "state" }}</span>
+                    </li>
+                  {{ end }}
+                </ul>
+              </div>
+              <div class="machine-cluster">
+                <div class="machine-title online">Online (ONL)</div>
+                <ul class="machine-list">
+                  {{ range $online }}
+                    <li class="machine-item online">
+                      <b>{{ .String "name" }}</b>
+                      <span class="machine-meta">[ID: {{ .Int "id" }}, Host: {{ .String "host_name" }}]</span>
+                      <span>State: {{ .String "state" }}</span>
+                    </li>
+                  {{ end }}
+                </ul>
+              </div>
+              <div class="machine-cluster">
+                <div class="machine-title nimby">Online Nimby (ONL NBY)</div>
+                <ul class="machine-list">
+                  {{ range $nimby }}
+                    <li class="machine-item nimby">
+                      <b>{{ .String "name" }}</b>
+                      <span class="machine-meta">[ID: {{ .Int "id" }}, Host: {{ .String "host_name" }}]</span>
+                      <span>State: {{ .String "state" }}</span>
+                    </li>
+                  {{ end }}
+                </ul>
+              </div>
+              <div class="machine-cluster">
+                <div class="machine-title running">Running (ONL RUN)</div>
+                <ul class="machine-list">
+                  {{ range $running }}
+                    <li class="machine-item running">
+                      <b>{{ .String "name" }}</b>
+                      <span class="machine-meta">[ID: {{ .Int "id" }}, Host: {{ .String "host_name" }}]</span>
+                      <span>State: {{ .String "state" }}</span>
+                    </li>
+                  {{ end }}
+                </ul>
+              </div>
   
 
   # Add more pages here:
