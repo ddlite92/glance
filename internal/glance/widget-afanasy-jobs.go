@@ -18,11 +18,14 @@ type afanasyJobsWidget struct {
 }
 
 type AfanasyJob struct {
-	ID         int     `json:"id"`
-	Name       string  `json:"name"`
-	State      string  `json:"state"`
-	UserName   string  `json:"user_name"`
-	Percentage float64 `json:"progress_percentage"`
+	ID         int              `json:"id"`
+	Name       string           `json:"name"`
+	State      string           `json:"state"`
+	UserName   string           `json:"user_name"`
+	Percentage float64          `json:"progress_percentage"`
+	Branch     string           `json:"branch"`
+	Priority   int              `json:"priority"`
+	Blocks     []map[string]any `json:"blocks"`
 }
 
 func (widget *afanasyJobsWidget) initialize() error {
