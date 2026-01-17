@@ -475,6 +475,17 @@ var customAPITemplateFuncs = func() template.FuncMap {
 	}
 
 	funcs := template.FuncMap{
+		// filter: returns a filtered slice based on a predicate function
+		// Usage in template: {{ filter .Items "FieldName" "value" }}
+		"filter": func(items []decoratedGJSONResult, key string, value string) []decoratedGJSONResult {
+			filtered := make([]decoratedGJSONResult, 0, len(items))
+			for _, item := range items {
+				if item.String(key) == value {
+					filtered = append(filtered, item)
+				}
+			}
+			return filtered
+		},
 		"toFloat": func(a int) float64 {
 			return float64(a)
 		},
