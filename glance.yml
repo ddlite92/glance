@@ -271,7 +271,7 @@ pages:
                   </tr>
                 </thead>
                 <tbody>
-                  {{ $jobs := (filter (sort .JSON.Array "jobs" "user_name") (lambda "j" (ne (j.String "user_name") "afadmin"))) }}
+                  {{ $jobs := filterOut (sort .JSON.Array "jobs" "user_name") "user_name" "afadmin" }}
                   {{ range $jobs }}
                   <tr>
                     <td>{{ .Int "id" }}</td>
