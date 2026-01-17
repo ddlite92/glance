@@ -539,6 +539,12 @@ var customAPITemplateFuncs = func() template.FuncMap {
 			return itemAtIndexOrDefault(regex.FindStringSubmatch(s), 1, "")
 		},
 		"percentChange": percentChange,
+		"sort": func(results []decoratedGJSONResult, key string) []decoratedGJSONResult {
+			sort.Slice(results, func(a, b int) bool {
+				return results[a].String(key) < results[b].String(key)
+			})
+			return results
+		},
 		"sortByString": func(key, order string, results []decoratedGJSONResult) []decoratedGJSONResult {
 			sort.Slice(results, func(a, b int) bool {
 				if order == "asc" {
@@ -627,6 +633,16 @@ var customAPITemplateFuncs = func() template.FuncMap {
 			filtered := make([]decoratedGJSONResult, 0, len(results))
 			for _, result := range results {
 				if result.String(key) == value {
+					filtered = append(filtered, result)
+				}
+			}
+			return filtered
+		},
+		// filterNot: returns a filtered slice of decoratedGJSONResult where key != value
+		"filterNot": func(key, value string, results []decoratedGJSONResult) []decoratedGJSONResult {
+			filtered := make([]decoratedGJSONResult, 0, len(results))
+			for _, result := range results {
+				if result.String(key) != value {
 					filtered = append(filtered, result)
 				}
 			}

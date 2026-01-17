@@ -36,6 +36,7 @@ pages:
           - type: custom-api
             title: Cats as a Service
             url: https://cataas.com/api/cats?limit=12
+            allow-insecure: true
             cache: 1h
             template: |
               <div class="cat-photo-grid">
@@ -271,7 +272,7 @@ pages:
                   </tr>
                 </thead>
                 <tbody>
-                  {{ $jobs := (filter (sort .JSON.Array "jobs" "user_name") (lambda "j" (ne (j.String "user_name") "afadmin"))) }}
+                  {{ $jobs := (filterNot "user_name" "afadmin" (sort (.JSON.Array "jobs") "user_name")) }}
                   {{ range $jobs }}
                   <tr>
                     <td>{{ .Int "id" }}</td>
