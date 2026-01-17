@@ -1,7 +1,6 @@
 package glance
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -10,9 +9,12 @@ import (
 	"time"
 )
 
+var afanasyJobsTemplate = mustParseTemplate("afanasy-jobs.html", "widget-base.html")
+
 type afanasyJobsWidget struct {
 	widgetBase    `yaml:",inline"`
-	AllowInsecure bool `yaml:"allow-insecure"`
+	AllowInsecure bool         `yaml:"allow-insecure"`
+	Jobs          []AfanasyJob `yaml:"-"`
 }
 
 type AfanasyJob struct {
@@ -56,21 +58,9 @@ func (widget *afanasyJobsWidget) update(ctx context.Context) {
 	j := jobsData.Jobs
 
 	fmt.Printf("afanasy-jobs widget: loaded %d jobs\n", len(j))
-
-	tmpl, err := template.ParseFiles("internal/glance/templates/afanasy-jobs.html")
-	if err != nil {
-		widget.withError(fmt.Errorf("failed to parse template: %w", err))
-		return
-	}
-	var buf bytes.Buffer
-	if err := tmpl.Execute(&buf, j); err != nil {
-		widget.withError(fmt.Errorf("failed to execute template: %w", err))
-		return
-	}
-	widget.templateBuffer.Reset()
-	widget.templateBuffer.Write(buf.Bytes())
+	widget.Jobs = j
 }
 
 func (widget *afanasyJobsWidget) Render() template.HTML {
-	return template.HTML(widget.templateBuffer.String())
+	return widget.renderTemplate(widget, afanasyJobsTemplate)
 }

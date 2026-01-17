@@ -1,7 +1,6 @@
 package glance
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -10,9 +9,12 @@ import (
 	"time"
 )
 
+var afanasyMachinesTemplate = mustParseTemplate("afanasy-machines.html", "widget-base.html")
+
 type afanasyMachinesWidget struct {
 	widgetBase    `yaml:",inline"`
-	AllowInsecure bool `yaml:"allow-insecure"`
+	AllowInsecure bool             `yaml:"allow-insecure"`
+	Machines      []AfanasyMachine `yaml:"-"`
 }
 
 type AfanasyMachine struct {
@@ -58,22 +60,9 @@ func (widget *afanasyMachinesWidget) update(ctx context.Context) {
 		widget.withError(fmt.Errorf("failed to decode machine data JSON: %w", err))
 		return
 	}
-	machines := rendersData.Renders
-
-	tmpl, err := template.ParseFiles("internal/glance/templates/afanasy-machines.html")
-	if err != nil {
-		widget.withError(fmt.Errorf("failed to parse template: %w", err))
-		return
-	}
-	var buf bytes.Buffer
-	if err := tmpl.Execute(&buf, machines); err != nil {
-		widget.withError(fmt.Errorf("failed to execute template: %w", err))
-		return
-	}
-	widget.templateBuffer.Reset()
-	widget.templateBuffer.Write(buf.Bytes())
+	widget.Machines = rendersData.Renders
 }
 
 func (widget *afanasyMachinesWidget) Render() template.HTML {
-	return template.HTML(widget.templateBuffer.String())
+	return widget.renderTemplate(widget, afanasyMachinesTemplate)
 }

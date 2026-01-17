@@ -1,4 +1,4 @@
-<!-- afanasy-jobs.html: Table UI for Afanasy Jobs (AG Grid/AntD style inspiration) -->
+{{ define "widget-content" }}
 <div class="afanasy-jobs-table-container">
   <input type="text" id="jobSearch" placeholder="Search by user/job name..." onkeyup="filterJobsTable()" />
   <button onclick="exportJobsTable()">Export CSV</button>
@@ -16,7 +16,7 @@
       </tr>
     </thead>
     <tbody>
-      {{range .}}
+      {{range .Jobs}}
       <tr class="{{if eq .State "ERR"}}job-error{{else if eq .State "DON"}}job-finished{{else}}job-running{{end}}">
         <td>{{.UserName}}</td>
         <td>{{.Name}}</td>

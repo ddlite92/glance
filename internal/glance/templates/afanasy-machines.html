@@ -1,4 +1,4 @@
-<!-- afanasy-machines.html: Table UI for Afanasy Render Machines (AG Grid/AntD style inspiration) -->
+{{ define "widget-content" }}
 <div class="afanasy-machines-table-container">
   <input type="text" id="machineSearch" placeholder="Search by machine/user name..." onkeyup="filterMachinesTable()" />
   <button onclick="exportMachinesTable()">Export CSV</button>
@@ -13,7 +13,7 @@
       </tr>
     </thead>
     <tbody>
-      {{range .}}
+      {{range .Machines}}
       <tr class="{{if eq .State "ONL RUN"}}job-running{{else if eq .State "OFF NBY"}}job-error{{else if eq .State "ONL NBY"}}job-finished{{end}}">
         <td>{{.Name}}</td>
         <td>
