@@ -13,60 +13,32 @@ pages:
               max-columns: 1
               widgets:
                 - type: repository
-                  title: Vercel Next.js
+                  title: Blender Mirror
                   token: ${GITHUB_TOKEN}
-                  repository: vercel/next.js
-                  pull-requests-limit: 5
-                  issues-limit: 3
-                  commits-limit: 3
+                  repository: blender/blender-mirror
+                  pull-requests-limit: 3
+                  commits-limit: 5
                   allow-insecure: true
                 - type: repository
-                  title: Facebook React
+                  title: OpenCue
                   token: ${GITHUB_TOKEN}
-                  repository: facebook/react
-                  pull-requests-limit: 5
-                  issues-limit: 3
-                  commits-limit: 3
+                  repository: AcademySoftwareFoundation/OpenCue
+                  pull-requests-limit: 3
+                  commits-limit: 5
                   allow-insecure: true
                 - type: repository
-                  title: Microsoft VSCode
+                  title: Open Shading Language
                   token: ${GITHUB_TOKEN}
-                  repository: microsoft/vscode
-                  pull-requests-limit: 5
-                  issues-limit: 3
-                  commits-limit: 3
-                  allow-insecure: true
-                - type: repository
-                  title: Bootstrap
-                  token: ${GITHUB_TOKEN}
-                  repository: twbs/bootstrap
-                  pull-requests-limit: 5
-                  issues-limit: 3
-                  commits-limit: 3
-                  allow-insecure: true
-                - type: repository
-                  title: Supabase
-                  token: ${GITHUB_TOKEN}
-                  repository: supabase/supabase
-                  pull-requests-limit: 5
-                  issues-limit: 3
-                  commits-limit: 3
+                  repository: AcademySoftwareFoundation/OpenShadingLanguage
+                  pull-requests-limit: 3
+                  commits-limit: 5
                   allow-insecure: true
                 - type: repository
                   title: OpenAI Python
                   token: ${GITHUB_TOKEN}
                   repository: openai/openai-python
-                  pull-requests-limit: 5
-                  issues-limit: 3
-                  commits-limit: 3
-                  allow-insecure: true
-                - type: repository
-                  title: HuggingFace Transformers
-                  token: ${GITHUB_TOKEN}
-                  repository: huggingface/transformers
-                  pull-requests-limit: 5
-                  issues-limit: 3
-                  commits-limit: 3
+                  pull-requests-limit: 3
+                  commits-limit: 5
                   allow-insecure: true
 
       - size: full
