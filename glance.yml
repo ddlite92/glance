@@ -9,35 +9,22 @@ pages:
     columns:
       - size: small
         widgets:
-          - type: rss
-            limit: 20
-            collapse-after: 15
-            cache: 12h
-            feeds:
-              - url: https://code.blender.org/feed/
-                allow-insecure: true
-                title: Blender
-                limit: 2
-              - url: https://www.blendernation.com/feed/
-                allow-insecure: true
-                title: Blender Nation
-                limit: 2
-              - url: https://80.lv/feed/
-                allow-insecure: true
-                title: 80 Level (Graphics R&D)
-                limit: 2
-              - url: https://developer.nvidia.com/blog/feed/
-                allow-insecure: true
-                title: NVIDIA Developer Blog
-                limit: 2
-              - url: https://dev.to/feed
-                allow-insecure: true
-                title: Dev.to
-                limit: 2
-              - url: https://realpython.com/atom.xml
-                allow-insecure: true
-                title: Real Python
-                limit: 2
+            - type: releases
+              title: GitHub Trending
+              show-source-icon: true
+              limit: 10
+              collapse-after: 5
+              repositories:
+                - vercel/next.js
+                - facebook/react
+                - microsoft/vscode
+                - torvalds/linux
+                - twbs/bootstrap
+                - pnpm/pnpm
+                - supabase/supabase
+                - openai/openai-python
+                - huggingface/transformers
+                - ansible/ansible
 
       - size: full
         widgets:
@@ -60,34 +47,34 @@ pages:
           - type: calendar
             first-day-of-week: monday
               
-  - name: Render Farm
-    columns:
-      - size: full
-        widgets:
-          - type: afanasy-jobs
-            title: Afanasy Jobs
-            cache: 30s
-            allow-insecure: true
-          - type: calendar
-            title: Debug Calendar
-      - size: small
-        widgets:
-          - type: monitor
-            style: vertical-list
-            cache: 30s
-            title: Render Nodes
-            sites:
-              - title: mon180
-                url: http://192.168.0.101
-                allow-insecure: true
-              - title: mon181
-                url: http://192.168.90.181
-              - title: mon188
-                url: http://192.168.0.164
-                allow-insecure: true
-              - title: mon194
-                url: http://192.168.0.184
-                allow-insecure: true
+#  - name: Render Farm
+#    columns:
+#      - size: full
+#        widgets:
+#          - type: afanasy-jobs
+#            title: Afanasy Jobs
+#            cache: 30s
+#            allow-insecure: true
+#          - type: calendar
+#            title: Debug Calendar
+#      - size: small
+#        widgets:
+#          - type: monitor
+#            style: vertical-list
+#            cache: 30s
+#            title: Render Nodes
+#            sites:
+#              - title: mon180
+#                url: http://192.168.0.101
+#                allow-insecure: true
+#              - title: mon181
+#                url: http://192.168.90.181
+#              - title: mon188
+#                url: http://192.168.0.164
+#                allow-insecure: true
+#              - title: mon194
+#                url: http://192.168.0.184
+#                allow-insecure: true
       
   - name: Developer
     columns:
@@ -161,14 +148,14 @@ pages:
               - title: Afanasy Machines
                 url: http://192.168.90.104:5000/afanasy/renders
 
-  - name: Render Machines
-    columns:
-      - size: full
-        widgets:
-          - type: afanasy-machines
-            title: Afanasy Machines
-            allow-insecure: true
-            cache: 30s
+#  - name: Render Machines
+#    columns:
+#      - size: full
+#        widgets:
+#          - type: afanasy-machines
+#            title: Afanasy Machines
+#            allow-insecure: true
+#            cache: 30s
     
 
   
