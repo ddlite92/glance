@@ -475,6 +475,17 @@ var customAPITemplateFuncs = func() template.FuncMap {
 	}
 
 	funcs := template.FuncMap{
+		// filterNot: returns a filtered slice excluding items where key == value
+		// Usage: {{ filterNot .Items "FieldName" "value" }}
+		"filterNot": func(items []decoratedGJSONResult, key string, value string) []decoratedGJSONResult {
+			filtered := make([]decoratedGJSONResult, 0, len(items))
+			for _, item := range items {
+				if item.String(key) != value {
+					filtered = append(filtered, item)
+				}
+			}
+			return filtered
+		},
 		// sort: sorts a slice of decoratedGJSONResult by key and order (asc/desc), type can be "string", "int", "float", or "time" (with layout for time)
 		// Usage: {{ sort .Items "key" "asc" "string" }} or {{ sort .Items "key" "asc" "time" "2006-01-02T15:04:05Z07:00" }}
 		"sort": func(items []decoratedGJSONResult, key string, order string, typ string, extra ...string) []decoratedGJSONResult {
