@@ -192,6 +192,10 @@ pages:
             cache: 0s
             refresh-interval: 10s
             template: |
+              <!--
+                Note: For true real-time, ensure the API and Glance backend are not caching responses.
+                This widget refreshes every 10s, but backend/API cache may delay updates.
+              -->
               <style>
                 .job-dashboard-table {
                   width: 100%;
@@ -234,6 +238,12 @@ pages:
                   border-radius: 6px 0 0 6px;
                   transition: width 0.5s;
                 }
+                .job-user {
+                  color: #90caf9;
+                  font-weight: 600;
+                  font-size: 0.97em;
+                  letter-spacing: 0.5px;
+                }
                 .job-status {
                   font-weight: 600;
                   padding: 0.2em 0.7em;
@@ -255,15 +265,18 @@ pages:
                   <tr>
                     <th>ID</th>
                     <th>Name</th>
+                    <th>User</th>
                     <th>Status</th>
                     <th>Progress</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {{ range .JSON.Array "jobs" }}
+                  {{ $jobs := (filter (sort .JSON.Array "jobs" "user_name") (lambda "j" (ne (j.String "user_name") "afadmin"))) }}
+                  {{ range $jobs }}
                   <tr>
                     <td>{{ .Int "id" }}</td>
                     <td>{{ .String "name" }}</td>
+                    <td><span class="job-user">{{ .String "user_name" }}</span></td>
                     <td>
                       {{ $status := (or (.String "state") (.String "status") "UNKNOWN") }}
                       <span class="job-status {{ $status }}">{{ $status }}</span>
