@@ -1,3 +1,5 @@
+
+
 package glance
 
 import (
@@ -9,6 +11,12 @@ import (
 	"net/http"
 	"time"
 )
+
+// Response struct for jobs API
+type RenderJobResponse struct {
+	Jobs []RenderJob `json:"jobs"`
+}
+
 
 var renderJobWidgetTemplate = mustParseTemplate("render-job.html", "widget-base.html")
 
@@ -37,25 +45,25 @@ func (widget *renderJobWidget) initialize() error {
 }
 
 func (widget *renderJobWidget) update(ctx context.Context) {
-	client := &http.Client{Timeout: 10 * time.Second}
-	resp, err := client.Get(widget.APIUrl)
-	if err != nil {
-		widget.withError(fmt.Errorf("failed to fetch jobs: %w", err))
-		return
-	}
-	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		widget.withError(fmt.Errorf("failed to read response: %w", err))
-		return
-	}
-	var jobs []RenderJob
-	if err := json.Unmarshal(body, &jobs); err != nil {
-		widget.withError(fmt.Errorf("failed to parse jobs: %w", err))
-		return
-	}
-	widget.Jobs = jobs
-	widget.withError(nil)
+   client := &http.Client{Timeout: 10 * time.Second}
+   resp, err := client.Get(widget.APIUrl)
+   if err != nil {
+	   widget.withError(fmt.Errorf("failed to fetch jobs: %w", err))
+	   return
+   }
+   defer resp.Body.Close()
+   body, err := io.ReadAll(resp.Body)
+   if err != nil {
+	   widget.withError(fmt.Errorf("failed to read response: %w", err))
+	   return
+   }
+   var response RenderJobResponse
+   if err := json.Unmarshal(body, &response); err != nil {
+	   widget.withError(fmt.Errorf("failed to parse jobs: %w", err))
+	   return
+   }
+   widget.Jobs = response.Jobs
+   widget.withError(nil)
 }
 
 func (widget *renderJobWidget) Render() template.HTML {
