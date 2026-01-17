@@ -9,29 +9,68 @@ pages:
     columns:
       - size: small
         widgets:
-            - type: releases
-              title: GitHub Trending
-              show-source-icon: true
-              limit: 10
-              collapse-after: 5
-              repositories:
-                - vercel/next.js
-                - facebook/react
-                - microsoft/vscode
-                - torvalds/linux
-                - twbs/bootstrap
-                - pnpm/pnpm
-                - supabase/supabase
-                - openai/openai-python
-                - huggingface/transformers
-                - ansible/ansible
+            - type: split-column
+              max-columns: 1
+              widgets:
+                - type: repository
+                  title: Vercel Next.js
+                  token: ${GITHUB_TOKEN}
+                  repository: vercel/next.js
+                  pull-requests-limit: 5
+                  issues-limit: 3
+                  commits-limit: 3
+                  allow-insecure: true
+                - type: repository
+                  title: Facebook React
+                  token: ${GITHUB_TOKEN}
+                  repository: facebook/react
+                  pull-requests-limit: 5
+                  issues-limit: 3
+                  commits-limit: 3
+                  allow-insecure: true
+                - type: repository
+                  title: Microsoft VSCode
+                  token: ${GITHUB_TOKEN}
+                  repository: microsoft/vscode
+                  pull-requests-limit: 5
+                  issues-limit: 3
+                  commits-limit: 3
+                  allow-insecure: true
+                - type: repository
+                  title: Bootstrap
+                  token: ${GITHUB_TOKEN}
+                  repository: twbs/bootstrap
+                  pull-requests-limit: 5
+                  issues-limit: 3
+                  commits-limit: 3
+                  allow-insecure: true
+                - type: repository
+                  title: Supabase
+                  token: ${GITHUB_TOKEN}
+                  repository: supabase/supabase
+                  pull-requests-limit: 5
+                  issues-limit: 3
+                  commits-limit: 3
+                  allow-insecure: true
+                - type: repository
+                  title: OpenAI Python
+                  token: ${GITHUB_TOKEN}
+                  repository: openai/openai-python
+                  pull-requests-limit: 5
+                  issues-limit: 3
+                  commits-limit: 3
+                  allow-insecure: true
+                - type: repository
+                  title: HuggingFace Transformers
+                  token: ${GITHUB_TOKEN}
+                  repository: huggingface/transformers
+                  pull-requests-limit: 5
+                  issues-limit: 3
+                  commits-limit: 3
+                  allow-insecure: true
 
       - size: full
         widgets:
-          - type: group
-            widgets:
-              - type: hacker-news
-              
           - type: videos
             style: grid-cards
             allow-insecure: true
