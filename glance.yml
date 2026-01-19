@@ -306,7 +306,8 @@ pages:
                 <div class="machine-cluster">
                   <div class="machine-title offline">Offline (OFF NBY)</div>
                   <ul class="machine-list">
-                    {{ range (filter "state" " OFF NBY" (.JSON.Array "renders")) }}
+                    {{ $offnby := (sort (filter "state" " OFF NBY" (.JSON.Array "renders")) "name") }}
+                    {{ range $offnby }}
                       <li class="machine-item offline">
                         <b>{{ .String "name" }}</b>
                       </li>
@@ -316,7 +317,8 @@ pages:
                 <div class="machine-cluster">
                   <div class="machine-title online">Online (ONL)</div>
                   <ul class="machine-list">
-                    {{ range (filter "state" " ONL" (.JSON.Array "renders")) }}
+                    {{ $onl := (sort (filter "state" " ONL" (.JSON.Array "renders")) "name") }}
+                    {{ range $onl }}
                       <li class="machine-item online">
                         <b>{{ .String "name" }}</b>
                       </li>
@@ -326,7 +328,8 @@ pages:
                 <div class="machine-cluster">
                   <div class="machine-title nimby">Online Nimby (ONL NBY)</div>
                   <ul class="machine-list">
-                    {{ range (filter "state" " ONL NBY" (.JSON.Array "renders")) }}
+                    {{ $onlnby := (sort (filter "state" " ONL NBY" (.JSON.Array "renders")) "name") }}
+                    {{ range $onlnby }}
                       <li class="machine-item nimby">
                         <b>{{ .String "name" }}</b>
                       </li>
@@ -336,9 +339,23 @@ pages:
                 <div class="machine-cluster">
                   <div class="machine-title running">Running (ONL RUN)</div>
                   <ul class="machine-list">
-                    {{ range (filter "state" " ONL RUN" (.JSON.Array "renders")) }}
+                    {{ $onlrun := (sort (filter "state" " ONL RUN" (.JSON.Array "renders")) "name") }}
+                    {{ range $onlrun }}
                       <li class="machine-item running">
                         <b>{{ .String "name" }}</b>
+                      </li>
+                    {{ end }}
+                  </ul>
+                </div>
+                <div class="machine-cluster">
+                  <div class="machine-title" style="color:#ff9800;">Need To Check</div>
+                  <ul class="machine-list">
+                    {{ $all := (.JSON.Array "renders") }}
+                    {{ $needcheck := (filterNot "state" " OFF NBY" (filterNot "state" " ONL" (filterNot "state" " ONL NBY" (filterNot "state" " ONL RUN" $all)))) }}
+                    {{ range (sort $needcheck "name") }}
+                      <li class="machine-item">
+                        <b>{{ .String "name" }}</b>
+                        <span style="color:#ff9800;">State: {{ .String "state" }}</span>
                       </li>
                     {{ end }}
                   </ul>
