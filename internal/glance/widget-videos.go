@@ -31,6 +31,7 @@ type videosWidget struct {
 	Playlists         []string  `yaml:"playlists"`
 	Limit             int       `yaml:"limit"`
 	IncludeShorts     bool      `yaml:"include-shorts"`
+	AllowInsecure     bool      `yaml:"allow-insecure"`
 }
 
 func (widget *videosWidget) initialize() error {
@@ -64,7 +65,7 @@ func (widget *videosWidget) initialize() error {
 }
 
 func (widget *videosWidget) update(ctx context.Context) {
-	videos, err := fetchYoutubeChannelUploads(widget.Channels, widget.VideoUrlTemplate, widget.IncludeShorts)
+	videos, err := fetchYoutubeChannelUploads(widget.Channels, widget.VideoUrlTemplate, widget.IncludeShorts, widget.AllowInsecure)
 
 	if !widget.canContinueUpdateAfterHandlingErr(err) {
 		return
@@ -138,7 +139,7 @@ func (v videoList) sortByNewest() videoList {
 	return v
 }
 
-func fetchYoutubeChannelUploads(channelOrPlaylistIDs []string, videoUrlTemplate string, includeShorts bool) (videoList, error) {
+func fetchYoutubeChannelUploads(channelOrPlaylistIDs []string, videoUrlTemplate string, includeShorts bool, allowInsecure bool) (videoList, error) {
 	requests := make([]*http.Request, 0, len(channelOrPlaylistIDs))
 
 	for i := range channelOrPlaylistIDs {
@@ -157,7 +158,11 @@ func fetchYoutubeChannelUploads(channelOrPlaylistIDs []string, videoUrlTemplate 
 		requests = append(requests, request)
 	}
 
-	job := newJob(decodeXmlFromRequestTask[youtubeFeedResponseXml](defaultHTTPClient), requests).withWorkers(30)
+	httpClient := defaultHTTPClient
+	if allowInsecure {
+		httpClient = defaultInsecureHTTPClient
+	}
+	job := newJob(decodeXmlFromRequestTask[youtubeFeedResponseXml](httpClient), requests).withWorkers(30)
 	responses, errs, err := workerPoolDo(job)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", errNoContent, err)

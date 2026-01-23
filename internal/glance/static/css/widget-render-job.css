@@ -1,0 +1,112 @@
+.dashboard-style {
+  background: #181a20;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px #0002;
+  padding: 1.5em 1em;
+}
+.dashboard-title {
+  font-size: 1.4em;
+  font-weight: 700;
+  margin-bottom: 1em;
+  color: #ffe082;
+  letter-spacing: 1px;
+}
+.dashboard-job-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+.dashboard-job-row {
+  display: flex;
+  align-items: center;
+  background: #23242a;
+  border-radius: 6px;
+  padding: 0.75em 1em;
+  box-shadow: 0 1px 4px #0001;
+}
+.job-id {
+  font-weight: bold;
+  color: #90caf9;
+  width: 2.5em;
+  text-align: right;
+  margin-right: 1.5em;
+}
+.job-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3em;
+}
+.job-title {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: #fff;
+}
+.job-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  font-size: 0.95em;
+  color: #b0bec5;
+}
+.status-indicator {
+  display: inline-block;
+  width: 0.8em;
+  height: 0.8em;
+  border-radius: 50%;
+  background: #b0bec5;
+}
+.status-running { background: #4caf50; }
+.status-error { background: #e57373; }
+.status-done { background: #64b5f6; }
+.status-unknown { background: #b0bec5; }
+.job-progress-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  margin-top: 0.2em;
+}
+.progress-bar-bg {
+  width: 120px;
+  height: 10px;
+  background: #333;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ffe082, #ffd54f 80%);
+  border-radius: 5px 0 0 5px;
+  transition: width 0.5s;
+}
+.progress-label {
+  font-size: 0.95em;
+  color: #ffe082;
+  min-width: 2.5em;
+  text-align: right;
+}
+.render-job-widget {
+  padding: 1em;
+}
+.render-job-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5em;
+}
+.render-job-table th, .render-job-table td {
+  border: 1px solid #444;
+  padding: 0.5em 0.75em;
+  text-align: left;
+}
+.render-job-table th {
+  background: #222;
+  color: #fff;
+}
+.render-job-table tr:nth-child(even) {
+  background: #222;
+}
+.render-job-empty {
+  color: #888;
+  padding: 1em 0;
+  text-align: center;
+}
