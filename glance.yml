@@ -283,7 +283,7 @@ pages:
       - size: full
         widgets:
           - type: custom-api
-            title: Render Machines
+            title: Render Machines (- refresh to update -)
             url: http://192.168.90.104:5000/afanasy/renders
             cache: 0s
             refresh-interval: 10s
