@@ -362,6 +362,180 @@ pages:
                 </div>
               </div>
   
+  - name: Machines
+    columns:
+      - size: full
+        widgets:
+          - type: custom-api
+            title: Machine Activity Dashboard (- refresh to update -)
+            url: http://192.168.90.104:5000/afanasy/renders/resources
+            cache: 0s
+            refresh-interval: 30s
+            allow-insecure: true
+            template: |
+              <style>
+                .machines-dashboard { font-family: system-ui, -apple-system, sans-serif; }
+                .machines-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+                .summary-card { background: linear-gradient(135deg, #23242a 0%, #2d2e34 100%); padding: 16px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+                .summary-value { font-size: 2em; font-weight: 700; margin-bottom: 4px; }
+                .summary-label { color: #aaa; font-size: 0.9em; text-transform: uppercase; letter-spacing: 1px; }
+                .summary-card.online .summary-value { color: #4caf50; }
+                .summary-card.offline .summary-value { color: #e57373; }
+                .summary-card.busy .summary-value { color: #64b5f6; }
+                .summary-card.available .summary-value { color: #ffb300; }
+                
+                .machines-table { width: 100%; border-collapse: collapse; margin-top: 1em; background: #181a20; border-radius: 8px; overflow: hidden; }
+                .machines-table th, .machines-table td { padding: 12px 8px; text-align: left; }
+                .machines-table td:first-child { width: 120px; padding-right: 4px; }
+                .machines-table td:nth-child(2) { width: 70px; padding-left: 4px; }
+                .machines-table td:nth-child(6) { width: 180px; padding-right: 4px; }
+                .machines-table td:nth-child(7) { width: 70px; padding-left: 4px; }
+                .machines-table th { background: #23242a; color: #ffe082; font-weight: 700; letter-spacing: 0.5px; position: sticky; top: 0; z-index: 10; font-size: 0.95em; }
+                .machines-table tr:nth-child(even) { background: #202124; }
+                .machines-table tr:nth-child(odd) { background: #23242a; }
+                .machines-table tr:hover { background: #2a2b30; transition: background 0.2s; }
+                
+                .status-badge { padding: 3px 8px; border-radius: 5px; font-weight: 600; font-size: 0.8em; display: inline-block; white-space: nowrap; }
+                .status-badge.online { background: #4caf50; color: #fff; }
+                .status-badge.offline { background: #e57373; color: #fff; }
+                .status-badge.busy { background: #64b5f6; color: #000; }
+                .status-badge.nimby { background: #ffb300; color: #000; }
+                
+                .resource-bar { width: 100%; max-width: 100px; height: 8px; background: #333; border-radius: 4px; overflow: hidden; display: inline-block; margin-right: 6px; vertical-align: middle; }
+                .resource-fill { height: 100%; border-radius: 4px; transition: width 0.3s; }
+                .resource-fill.cpu { background: linear-gradient(90deg, #64b5f6, #42a5f5); }
+                .resource-fill.mem { background: linear-gradient(90deg, #9575cd, #7e57c2); }
+                .resource-fill.disk { background: linear-gradient(90deg, #ffb300, #ffa000); }
+                .resource-fill.gpu { background: linear-gradient(90deg, #4caf50, #43a047); }
+                .resource-fill.warning { background: linear-gradient(90deg, #ff9800, #f57c00) !important; }
+                .resource-fill.danger { background: linear-gradient(90deg, #e57373, #e53935) !important; }
+                
+                .machine-name { font-weight: 600; color: #90caf9; font-size: 1.3em; }
+                .resource-value { font-size: 0.95em; color: #ddd; vertical-align: middle; font-weight: 500; }
+                .temp-value { color: #999; font-size: 0.85em; line-height: 1.4; }
+                .hardware-info { color: #777; font-size: 0.8em; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+              </style>
+              
+              <div class="machines-dashboard">
+                {{ $data := (index (.JSON.Array "") 0) }}
+                
+                <!-- Summary Cards -->
+                <div class="machines-summary">
+                  <div class="summary-card">
+                    <div class="summary-value" style="color: #ffe082;">{{ $data.Int "summary.total" }}</div>
+                    <div class="summary-label">Total Machines</div>
+                  </div>
+                  <div class="summary-card online">
+                    <div class="summary-value">{{ $data.Int "summary.online" }}</div>
+                    <div class="summary-label">Online</div>
+                  </div>
+                  <div class="summary-card offline">
+                    <div class="summary-value">{{ $data.Int "summary.offline" }}</div>
+                    <div class="summary-label">Offline</div>
+                  </div>
+                  <div class="summary-card busy">
+                    <div class="summary-value">{{ $data.Int "summary.busy" }}</div>
+                    <div class="summary-label">Busy</div>
+                  </div>
+                  <div class="summary-card available">
+                    <div class="summary-value">{{ $data.Int "summary.available" }}</div>
+                    <div class="summary-label">Available</div>
+                  </div>
+                  <div class="summary-card">
+                    <div class="summary-value" style="color: #4caf50;">{{ $data.Int "summary.with_hardware" }}</div>
+                    <div class="summary-label">With Hardware</div>
+                  </div>
+                </div>
+                
+                <!-- Machines Table -->
+                <h3 style="margin: 20px 0 12px 0;">Machine Activity Monitor ({{ $data.Int "summary.total" }} machines) <span style="font-size: 0.7em; color: #666; font-weight: normal;">• Use Ctrl+F to search</span></h3>
+                <table class="machines-table">
+                  <thead>
+                    <tr>
+                      <th>Machine</th>
+                      <th>Status</th>
+                      <th>CPU</th>
+                      <th>Memory</th>
+                      <th>Disk</th>
+                      <th>GPU</th>
+                      <th>Network</th>
+                      <th>Hardware</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {{ range (sort ($data.Array "renders") "name") }}
+                    <tr>
+                      <td>
+                        <span class="machine-name">{{ .String "name" }}</span>
+                      </td>
+                      <td>
+                        {{ if .Bool "online" }}
+                          {{ if .Bool "busy" }}
+                            <span class="status-badge busy">BUSY</span>
+                          {{ else if .Bool "nimby" }}
+                            <span class="status-badge nimby">NIMBY</span>
+                          {{ else }}
+                            <span class="status-badge online">ONLINE</span>
+                          {{ end }}
+                        {{ else }}
+                          <span class="status-badge offline">OFFLINE</span>
+                        {{ end }}
+                      </td>
+                      {{ if .Exists "host_resources" }}
+                        <td>
+                          {{ $cpuUsage := (.Int "host_resources.cpu_usage_percent") }}
+                          <div class="resource-bar">
+                            <div class="resource-fill cpu {{ if gt $cpuUsage 80 }}danger{{ else if gt $cpuUsage 60 }}warning{{ end }}" style="width: {{ $cpuUsage }}%;"></div>
+                          </div>
+                          <span class="resource-value">{{ $cpuUsage }}%</span>
+                          <div class="temp-value">{{ .Int "host_resources.cpu_num" }} cores • {{ .Int "host_resources.cpu_temp" }}°C</div>
+                        </td>
+                        <td>
+                          {{ $memUsage := (.Int "host_resources.mem_usage_percent") }}
+                          <div class="resource-bar">
+                            <div class="resource-fill mem {{ if gt $memUsage 80 }}danger{{ else if gt $memUsage 60 }}warning{{ end }}" style="width: {{ $memUsage }}%;"></div>
+                          </div>
+                          <span class="resource-value">{{ $memUsage }}%</span>
+                          <div class="temp-value">{{ .Int "host_resources.mem_used_mb" }} / {{ .Int "host_resources.mem_total_mb" }} MB</div>
+                        </td>
+                        <td>
+                          {{ $diskUsage := (.Int "host_resources.hdd_usage_percent") }}
+                          <div class="resource-bar">
+                            <div class="resource-fill disk {{ if gt $diskUsage 80 }}danger{{ else if gt $diskUsage 60 }}warning{{ end }}" style="width: {{ $diskUsage }}%;"></div>
+                          </div>
+                          <span class="resource-value">{{ $diskUsage }}%</span>
+                          <div class="temp-value">{{ .Int "host_resources.hdd_used_gb" }} / {{ .Int "host_resources.hdd_total_gb" }} GB</div>
+                        </td>
+                        <td>
+                          {{ if ne (.String "host_resources.gpu_string") "" }}
+                            {{ $gpuUsage := (.Int "host_resources.gpu_gpu_util") }}
+                            <div class="resource-bar">
+                              <div class="resource-fill gpu {{ if gt $gpuUsage 80 }}danger{{ else if gt $gpuUsage 60 }}warning{{ end }}" style="width: {{ $gpuUsage }}%;"></div>
+                            </div>
+                            <span class="resource-value">{{ $gpuUsage }}%</span>
+                            <div class="temp-value">{{ .String "host_resources.gpu_string" }}</div>
+                            <div class="temp-value">{{ .Int "host_resources.gpu_gpu_temp" }}°C • {{ printf "%.1f" (.Float "host_resources.gpu_mem_usage_percent") }}%</div>
+                          {{ else }}
+                            <span style="color: #666;">No GPU</span>
+                          {{ end }}
+                        </td>
+                        <td>
+                          <div class="temp-value">
+                            ↓ {{ .Int "host_resources.net_recv_kbsec" }} KB/s<br>
+                            ↑ {{ .Int "host_resources.net_send_kbsec" }} KB/s
+                          </div>
+                        </td>
+                        <td>
+                          <div class="hardware-info" title="{{ .String "host_resources.hw_info" }}">{{ .String "host_resources.hw_info" }}</div>
+                        </td>
+                      {{ else }}
+                        <td colspan="6" style="text-align: center; color: #666;">No resource data available</td>
+                      {{ end }}
+                    </tr>
+                    {{ end }}
+                  </tbody>
+                </table>
+              </div>
 
   # Add more pages here:
   # - name: Your page name
